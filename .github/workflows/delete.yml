@@ -1,0 +1,28 @@
+name: Delete All Except Workflows
+
+on:
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Delete everything except .github/workflows
+        run: |
+          find . -mindepth 1 ! -path "./.github" ! -path "./.github/workflows" ! -path "./.github/workflows/*" -exec rm -rf {} +
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Commit and push deletions
+        run: |
+          git add -A
+          git commit -m "Deleted everything except .github/workflows" || echo "Nothing to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
