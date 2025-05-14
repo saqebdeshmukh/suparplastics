@@ -1,0 +1,23 @@
+name: Unzip to Root and Commit
+
+on:
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Unzip file to root
+        run: unzip simply-static-1-1747214533.zip -d ./
+
+      - name: Commit unzipped files
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Unzipped contents of simply-static-1-1747214533.zip to root"
+          git push
